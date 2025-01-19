@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Fixtures - Premier League Prediction
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h2 class="page-title">Upcoming Premier League Fixtures</h2>
+
+        {% if fixtures %}
+            <div class="fixtures-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Home Team</th>
+                            <th>Away Team</th>
+                            <th>Match Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fixture in fixtures %}
+                            <tr>
+                                <td class="home-team">{{ fixture.home_team }}</td>
+                                <td class="away-team">{{ fixture.away_team }}</td>
+                                <td class="match-time">{{ fixture.match_time }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No upcoming fixtures available at the moment.</p>
+        {% endif %}
+    </div>
+
+    <style>
+        /* General Container */
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Table Styling */
+        .fixtures-table {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Arial', sans-serif;
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        td.home-team, td.away-team {
+            font-weight: bold;
+            color: #333;
+        }
+
+        td.match-time {
+            font-style: italic;
+            color: #555;
+        }
+
+        /* Hover Effects */
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        /* No upcoming fixtures message */
+        p {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #777;
+            padding: 20px;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Player Statistics
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h2 class="mb-4">Premier League Top Scorers</h2>
+        
+        <!-- Stats Navigation -->
+        <div class="mb-4">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary active" data-stat="scoring">Scoring</button>
+                <button type="button" class="btn btn-primary" data-stat="general">General</button>
+                <button type="button" class="btn btn-primary" data-stat="team">Team Context</button>
+            </div>
+        </div>
+
+        <!-- Players Table -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <!-- Always visible columns -->
+                        <th>Player</th>
+                        <th>Team</th>
+                        
+                        <!-- Scoring Stats -->
+                        <th class="stat-column scoring">Goals</th>
+                        <th class="stat-column scoring">Goals/Game</th>
+                        <th class="stat-column scoring">Goals/90</th>
+                        <th class="stat-column scoring">% Team Goals</th>
+                        
+                        <!-- General Stats -->
+                        <th class="stat-column general d-none">Position</th>
+                        <th class="stat-column general d-none">Nationality</th>
+                        <th class="stat-column general d-none">Appearances</th>
+                        <th class="stat-column general d-none">Minutes</th>
+                        
+                        <!-- Team Context -->
+                        <th class="stat-column team d-none">Team Games</th>
+                        <th class="stat-column team d-none">Team Goals Scored</th>
+                        <th class="stat-column team d-none">Team Goals Conceded</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.team }}</td>
+                        
+                        <!-- Scoring Stats -->
+                        <td class="stat-column scoring">{{ player.goals }}</td>
+                        <td class="stat-column scoring">{{ player.goals_per_game }}</td>
+                        <td class="stat-column scoring">{{ player.goals_per_90 }}</td>
+                        <td class="stat-column scoring">{{ player.percentage_team_goals }}%</td>
+                        
+                        <!-- General Stats -->
+                        <td class="stat-column general d-none">{{ player.position }}</td>
+                        <td class="stat-column general d-none">{{ player.nationality }}</td>
+                        <td class="stat-column general d-none">{{ player.appearances }}</td>
+                        <td class="stat-column general d-none">{{ player.minutes_played }}</td>
+                        
+                        <!-- Team Context -->
+                        <td class="stat-column team d-none">{{ player.team_games }}</td>
+                        <td class="stat-column team d-none">{{ player.team_goals_scored }}</td>
+                        <td class="stat-column team d-none">{{ player.team_goals_conceded }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- JavaScript for handling stat toggles -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('[data-stat]');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                buttons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Hide all stat columns
+                document.querySelectorAll('.stat-column').forEach(col => {
+                    col.classList.add('d-none');
+                });
+                
+                // Show columns for selected stat category
+                const statType = this.dataset.stat;
+                document.querySelectorAll(`.stat-column.${statType}`).forEach(col => {
+                    col.classList.remove('d-none');
+                });
+            });
+        });
+    });
+    </script>
+{% endblock %}

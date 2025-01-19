@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Live Matches
+{% endblock %}
+
+{% block main %}
+    <h2 class="text-center my-4">Live Match Updates</h2>
+    {% if matches %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Home Team</th>
+                    <th>Score</th>
+                    <th>Away Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                <tr>
+                    <td>{{ match.home_team }}</td>
+                    <td>{{ match.home_score }} - {{ match.away_score }}</td>
+                    <td>{{ match.away_team }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center">No live matches at the moment.</p>
+    {% endif %}
+{% endblock %}

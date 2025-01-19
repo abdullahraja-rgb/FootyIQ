@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Recent Results
+{% endblock %}
+
+{% block main %}
+    <h2 class="text-center my-4">Recent Match Results</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Home Team</th>
+                    <th>Score</th>
+                    <th>Away Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.match_date }}</td>
+                    <td>{{ result.home_team }}</td>
+                    <td>{{ result.home_score }} - {{ result.away_score }}</td>
+                    <td>{{ result.away_team }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
