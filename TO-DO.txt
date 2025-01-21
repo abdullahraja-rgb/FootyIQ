@@ -1,0 +1,7 @@
+add login required to the fucntions
+improve u interface
+folder organising
+add the ml model on this repo
+final check
+-----------------
+deployment
