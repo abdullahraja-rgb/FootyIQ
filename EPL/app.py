@@ -240,40 +240,6 @@ def player_stats():
         flash(f"Error fetching player stats: {e}")
         return redirect("/")
 
-@app.route("/charts")
-def charts():
-    try:
-        standings_url = f"{BASE_URL}/competitions/{PREMIER_LEAGUE_ID}/standings"
-        standings_response = requests.get(standings_url, headers=HEADERS)
-        standings_data = standings_response.json()
-
-        scorers_url = f"{BASE_URL}/competitions/{PREMIER_LEAGUE_ID}/scorers"
-        scorers_response = requests.get(scorers_url, headers=HEADERS)
-        scorers_data = scorers_response.json()
-
-        matches_url = f"{BASE_URL}/competitions/{PREMIER_LEAGUE_ID}/matches"
-        matches_response = requests.get(matches_url, headers=HEADERS)
-        matches_data = matches_response.json()
-
-        standings = standings_data['standings'][0]['table']
-        team_stats = {
-            'teams': [t['team']['name'] for t in standings],
-            'points': [t['points'] for t in standings],
-        }
-
-        top_scorers = {
-            'names': [s['player']['name'] for s in scorers_data['scorers'][:10]],
-            'goals': [s['goals'] for s in scorers_data['scorers'][:10]]
-        }
-
-        recent_matches = [m for m in matches_data['matches'] if m['status'] == 'FINISHED'][-50:]
-        total_goals = sum(m['score']['fullTime']['home'] + m['score']['fullTime']['away'] for m in recent_matches)
-        avg_goals = round(total_goals / len(recent_matches), 2)
-
-        return render_template("charts.html", team_stats=team_stats, top_scorers=top_scorers, avg_goals=avg_goals)
-    except Exception as e:
-        flash(f"Error fetching chart data: {e}")
-        return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
