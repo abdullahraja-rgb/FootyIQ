@@ -1,93 +1,110 @@
-import os
-import requests
 import pandas as pd
-from dotenv import load_dotenv
-import time
+import os
+import joblib
 
-# Load environment variables from .env file
-load_dotenv()
+# --- File Paths ---
+PREM_HISTORICAL_FILE = "premier_league_1993_2024.csv"
+CHAMPIONSHIP_FILE = "championship_2004_2024.csv"
+OUTPUT_FILE = "historical_training_data_with_ids.csv"
+TEAM_MAP_FILE = "team_id_map.joblib"
 
-# --- Configuration ---
-API_KEY = os.environ.get('FOOTBALL_API_KEY')
-BASE_URL = "http://api.football-data.org/v4"
-HEADERS = {"X-Auth-Token": API_KEY}
-PREMIER_LEAGUE_ID = 'PL' # Competition code for Premier League
-OUTPUT_CSV = 'raw_matches.csv'
+# --- Column Mapping ---
+COLUMN_MAPPING = {
+    'Date': 'date',
+    'Season': 'season',
+    'HomeTeam': 'home_team_name',
+    'AwayTeam': 'away_team_name',
+    'FTH Goals': 'home_goals_full',
+    'FTA Goals': 'away_goals_full',
+    'FT Result': 'result',
+    'HT Result': 'half_time_result',
+    'Referee': 'referee',
+    'H Shots': 'home_shots',
+    'A Shots': 'away_shots',
+    'H SOT': 'home_shots_on_target',
+    'A SOT': 'away_shots_on_target',
+    'H Fouls': 'home_fouls',
+    'A Fouls': 'away_fouls',
+    'H Corners': 'home_corners',
+    'A Corners': 'away_corners',
+    'H Yellow': 'home_yellow_cards',
+    'A Yellow': 'away_yellow_cards',
+    'H Red': 'home_red_cards',
+    'A Red': 'away_red_cards',
+    'League': 'league'
+}
 
-# Seasons to fetch data for (e.g., 2018 to 2024)
-SEASONS = range(2018, 2025) 
-
-def parse_match_data(match):
+def process_historical_data(file_path):
     """
-    Parses a single match dictionary from the API into a flat dictionary.
+    Reads a historical CSV file, renames columns, and standardizes data.
     """
-    return {
-        'match_id': match.get('id'),
-        'date': match.get('utcDate'),
-        'season': match.get('season', {}).get('startDate', '')[:4],
-        'matchday': match.get('matchday'),
-        'home_team_id': match.get('homeTeam', {}).get('id'),
-        'home_team_name': match.get('homeTeam', {}).get('name'),
-        'away_team_id': match.get('awayTeam', {}).get('id'),
-        'away_team_name': match.get('awayTeam', {}).get('name'),
-        'home_goals_full': match.get('score', {}).get('fullTime', {}).get('home'),
-        'away_goals_full': match.get('score', {}).get('fullTime', {}).get('away'),
-        'home_goals_half': match.get('score', {}).get('halfTime', {}).get('home'),
-        'away_goals_half': match.get('score', {}).get('halfTime', {}).get('away'),
-        'result': match.get('score', {}).get('winner'),
-        'referee': match.get('referees', [{}])[0].get('name') if match.get('referees') else None
-    }
-
-def fetch_all_seasons_data():
-    """
-    Fetches detailed match data for multiple Premier League seasons and saves it to a CSV.
-    """
-    all_matches_list = []
+    if not os.path.exists(file_path):
+        print(f"File not found: {file_path}")
+        return pd.DataFrame()
     
-    print("Starting detailed data collection...")
-    for season in SEASONS:
-        print(f"Fetching data for the {season}-{season+1} season...")
-        try:
-            url = f"{BASE_URL}/competitions/{PREMIER_LEAGUE_ID}/matches"
-            params = {'season': season, 'status': 'FINISHED'}
-            
-            response = requests.get(url, headers=HEADERS, params=params)
-            response.raise_for_status()
-            
-            data = response.json()
-            season_matches = data.get('matches', [])
-            
-            if not season_matches:
-                print(f"Warning: No matches found for the {season} season.")
-                continue
-            
-            # Parse each match and add it to our list
-            for match in season_matches:
-                all_matches_list.append(parse_match_data(match))
-                
-            print(f"Successfully fetched and parsed {len(season_matches)} matches for the {season} season.")
-            
-            # Respect API rate limits (the free tier allows 10 calls per minute)
-            time.sleep(7) # Sleep for 7 seconds between seasons
+    print(f"Processing data from: {file_path}")
+    df = pd.read_csv(file_path)
 
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching data for season {season}: {e}")
-        except Exception as e:
-            print(f"An unexpected error occurred for season {season}: {e}")
-            
-    if all_matches_list:
-        # Convert the list of dictionaries to a pandas DataFrame
-        matches_df = pd.DataFrame(all_matches_list)
+    # Rename columns based on the mapping
+    df = df.rename(columns={k: v for k, v in COLUMN_MAPPING.items() if k in df.columns})
+
+    # Standardize the date format
+    df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y', errors='coerce')
+    
+    # Standardize the result
+    result_map = {'H': 'HOME_TEAM', 'D': 'DRAW', 'A': 'AWAY_TEAM'}
+    df['result'] = df['result'].replace(result_map)
+
+    # Clean up column names for half time goals
+    df = df.rename(columns={'HTH Goals': 'home_goals_half', 'HTA Goals': 'away_goals_half'})
         
-        # Save the combined DataFrame to a CSV file
-        matches_df.to_csv(OUTPUT_CSV, index=False)
-        print(f"\nData collection complete. All matches saved to '{OUTPUT_CSV}'.")
-        print(f"Total matches collected: {len(matches_df)}")
-    else:
-        print("\nData collection failed. No data was saved.")
+    return df
+
+def main():
+    """
+    Combines historical CSVs, creates team IDs, and saves the final dataset and map.
+    """
+    print("Starting data combination and ID creation process...")
+
+    # Load and process the two historical datasets
+    df_prem = process_historical_data(PREM_HISTORICAL_FILE)
+    df_champ = process_historical_data(CHAMPIONSHIP_FILE)
+
+    # Combine the dataframes
+    combined_df = pd.concat([df_prem, df_champ], ignore_index=True, sort=False)
+
+    # Drop potential duplicates
+    combined_df.drop_duplicates(subset=['date', 'home_team_name', 'away_team_name'], inplace=True)
+    
+    # Sort the data by date
+    combined_df = combined_df.sort_values(by='date', ascending=False).reset_index(drop=True)
+
+    # --- NEW LOGIC FOR ID CREATION ---
+    print("Creating unique team IDs...")
+    
+    # Get a list of all unique team names from both home and away columns
+    all_teams = pd.Series(
+        combined_df['home_team_name'].tolist() + 
+        combined_df['away_team_name'].tolist()
+    ).unique()
+    
+    # Create a mapping from team name to a unique integer ID
+    team_map = {name: i for i, name in enumerate(all_teams)}
+    
+    # Use the map to create new ID columns in the DataFrame
+    combined_df['home_team_id'] = combined_df['home_team_name'].map(team_map)
+    combined_df['away_team_id'] = combined_df['away_team_name'].map(team_map)
+    
+    # Save the final combined data to a new CSV
+    combined_df.to_csv(OUTPUT_FILE, index=False)
+    print(f"Data combination complete. Saved {len(combined_df)} unique rows to '{OUTPUT_FILE}'.")
+    
+    # Save the team mapping to a file for use in the prediction script
+    # FIX: Use a newer protocol for joblib dump to prevent corruption
+    joblib.dump(team_map, TEAM_MAP_FILE, protocol=4)
+    print(f"Team ID mapping saved to '{TEAM_MAP_FILE}'.")
+
+    return combined_df
 
 if __name__ == "__main__":
-    if not API_KEY:
-        print("Error: FOOTBALL_API_KEY not found. Please set it in your .env file.")
-    else:
-        fetch_all_seasons_data()
+    main()

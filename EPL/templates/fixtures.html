@@ -5,103 +5,571 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container">
-        <h2 class="page-title">Upcoming Premier League Fixtures</h2>
+    <div class="fixtures-container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-calendar-alt me-3"></i>
+                Upcoming Premier League Fixtures
+            </h1>
+            <p class="page-subtitle">Don't miss any of the exciting matches coming up!</p>
+        </div>
 
         {% if fixtures %}
-            <div class="fixtures-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Home Team</th>
-                            <th>Away Team</th>
-                            <th>Match Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for fixture in fixtures %}
-                            <tr>
-                                <td class="home-team">{{ fixture.home_team }}</td>
-                                <td class="away-team">{{ fixture.away_team }}</td>
-                                <td class="match-time">{{ fixture.match_time }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="fixtures-grid">
+                {% for fixture in fixtures %}
+                    <div class="fixture-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                        <div class="fixture-header">
+                            <div class="match-date">
+                                <i class="fas fa-clock me-2"></i>
+                                <span class="date-text">{{ fixture.date }}</span>
+                            </div>
+                            <div class="match-status">
+                                <span class="status-badge upcoming">Upcoming</span>
+                            </div>
+                        </div>
+                        
+                        <div class="teams-container">
+                            <div class="team home-team">
+                                <div class="team-info">
+                                    <h3 class="team-name">{{ fixture.home_team_name }}</h3>
+                                    <span class="team-label">Home</span>
+                                </div>
+                            </div>
+                            
+                            <div class="vs-section">
+                                <div class="vs-circle">
+                                    <span class="vs-text">VS</span>
+                                </div>
+                                <div class="match-time">
+                                    <i class="fas fa-stopwatch"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="team away-team">
+                                <div class="team-info">
+                                    <h3 class="team-name">{{ fixture.away_team_name }}</h3>
+                                    <span class="team-label">Away</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="fixture-footer">
+                            <div class="venue-info">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                <span>Premier League</span>
+                            </div>
+                            <div class="notification-toggle">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="fixtures-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>{{ fixtures|length }}</h4>
+                        <p>Upcoming Matches</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>This Week</h4>
+                        <p>Match Schedule</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy">
+                    </div>
+                    <div class="stat-info">
+                        <h4>Premier League</h4>
+                        <p>Competition</p>
+                    </div>
+                </div>
             </div>
         {% else %}
-            <p>No upcoming fixtures available at the moment.</p>
+            <div class="no-fixtures">
+                <div class="no-fixtures-icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+                <h3>No Upcoming Fixtures</h3>
+                <p>There are no scheduled matches at the moment. Check back soon for updates!</p>
+                <button class="refresh-btn">
+                    <i class="fas fa-sync-alt me-2"></i>
+                    Refresh Fixtures
+                </button>
+            </div>
         {% endif %}
     </div>
 
     <style>
-        /* General Container */
-        .container {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+        .fixtures-container {
+            padding: 0;
+            animation: fadeInUp 0.6s ease-out;
         }
 
-        /* Page Title */
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
         .page-title {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #333;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
         }
 
-        /* Table Styling */
-        .fixtures-table {
-            margin-top: 20px;
-            overflow-x: auto;
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin: 0;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Arial', sans-serif;
-            background-color: #fff;
+        /* Fixtures Grid */
+        .fixtures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-            font-size: 1rem;
+        /* Fixture Card */
+        .fixture-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
-        th {
-            background-color: #4CAF50;
+        .fixture-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .fixture-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        /* Fixture Header */
+        .fixture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .match-date {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .match-date i {
+            color: var(--primary-color);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.upcoming {
+            background: var(--success-gradient);
             color: white;
-            font-weight: bold;
         }
 
-        td {
-            background-color: #f9f9f9;
+        /* Teams Container */
+        .teams-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            gap: 1rem;
         }
 
-        td.home-team, td.away-team {
-            font-weight: bold;
-            color: #333;
-        }
-
-        td.match-time {
-            font-style: italic;
-            color: #555;
-        }
-
-        /* Hover Effects */
-        tr:hover {
-            background-color: #f1f1f1;
-            cursor: pointer;
-        }
-
-        /* No upcoming fixtures message */
-        p {
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
             text-align: center;
+        }
+
+        .team.away-team {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        
+
+        
+
+        
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name {
             font-size: 1.2rem;
-            color: #777;
-            padding: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.25rem 0;
+            line-height: 1.2;
+        }
+
+        .team-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* VS Section */
+        .vs-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+
+        .vs-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-light);
+            animation: pulse 2s infinite;
+        }
+
+        .vs-text {
+            color: white;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .match-time {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Fixture Actions */
+        
+
+        
+
+        
+
+        
+
+        
+
+        /* Fixture Footer */
+        .fixture-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .venue-info {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .venue-info i {
+            color: var(--primary-color);
+        }
+
+        .notification-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Fixtures Stats */
+        .fixtures-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .stat-info p {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* No Fixtures */
+        .no-fixtures {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-light);
+        }
+
+        .no-fixtures-icon {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .no-fixtures h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .no-fixtures p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .refresh-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .fixtures-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .fixture-card {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .teams-container {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .team {
+                justify-content: center;
+                text-align: center;
+                flex-direction: column;
+            }
+
+            .team.away-team {
+                flex-direction: row;
+                text-align: center;
+            }
+
+            .vs-section {
+                order: -1;
+                margin: 0;
+            }
+
+            
+
+            .fixtures-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fixture-card {
+                padding: 1rem;
+            }
+
+            .team-name {
+                font-size: 1rem;
+            }
+
+            
+            font-size: 0.85rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fixture-card {
+            animation: fadeInUp 0.6s ease-out forwards;
         }
     </style>
+
+    <script>
+        // Add interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Notification toggle functionality
+            document.querySelectorAll('.notification-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const icon = this.querySelector('i');
+                    if (this.classList.contains('active')) {
+                        icon.classList.remove('fa-bell');
+                        icon.classList.add('fa-bell-slash');
+                        this.style.background = 'var(--secondary-color)';
+                    } else {
+                        icon.classList.remove('fa-bell-slash');
+                        icon.classList.add('fa-bell');
+                        this.style.background = '';
+                    }
+                });
+            });
+
+            
+
+            // Refresh button functionality
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    icon.classList.add('fa-spin');
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        icon.classList.remove('fa-spin');
+                        this.disabled = false;
+                        location.reload();
+                    }, 2000);
+                });
+            }
+
+            // Add stagger animation to fixture cards
+            const cards = document.querySelectorAll('.fixture-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
 {% endblock %}

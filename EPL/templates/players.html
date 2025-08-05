@@ -5,101 +5,520 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container">
-        <h2 class="mb-4">Premier League Top Scorers</h2>
-        
-        <!-- Stats Navigation -->
-        <div class="mb-4">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary active" data-stat="scoring">Scoring</button>
-                <button type="button" class="btn btn-primary" data-stat="general">General</button>
-                <button type="button" class="btn btn-primary" data-stat="team">Team Context</button>
-            </div>
+    <div class="players-container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-users me-3"></i>
+                Premier League Top Players
+            </h1>
+            <p class="page-subtitle">Explore key statistics for the league's best performers</p>
         </div>
 
-        <!-- Players Table -->
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <!-- Always visible columns -->
-                        <th>Player</th>
-                        <th>Team</th>
-                        
+        <div class="stats-section">
+            <!-- Stats Navigation -->
+            <div class="stats-navigation">
+                <button type="button" class="stat-toggle-btn active" data-stat="scoring">
+                    <i class="fas fa-futbol me-2"></i>Scoring
+                </button>
+                <button type="button" class="stat-toggle-btn" data-stat="general">
+                    <i class="fas fa-user me-2"></i>General
+                </button>
+                <button type="button" class="stat-toggle-btn" data-stat="team">
+                    <i class="fas fa-shield-alt me-2"></i>Team Context
+                </button>
+            </div>
+
+            <!-- Players Table -->
+            {% if players %}
+                <div class="players-table-wrapper">
+                    <div class="table-header">
+                        <div class="player-col">Player</div>
+                        <div class="team-col">Team</div>
                         <!-- Scoring Stats -->
-                        <th class="stat-column scoring">Goals</th>
-                        <th class="stat-column scoring">Goals/Game</th>
-                        <th class="stat-column scoring">Goals/90</th>
-                        <th class="stat-column scoring">% Team Goals</th>
-                        
+                        <div class="stat-column scoring">Goals</div>
+                        <div class="stat-column scoring">G/Game</div>
+                        <div class="stat-column scoring">G/90</div>
+                        <div class="stat-column scoring">% Team Goals</div>
                         <!-- General Stats -->
-                        <th class="stat-column general d-none">Position</th>
-                        <th class="stat-column general d-none">Nationality</th>
-                        <th class="stat-column general d-none">Appearances</th>
-                        <th class="stat-column general d-none">Minutes</th>
-                        
+                        <div class="stat-column general d-none">Pos</div>
+                        <div class="stat-column general d-none">Nat</div>
+                        <div class="stat-column general d-none">Apps</div>
+                        <div class="stat-column general d-none">Mins</div>
                         <!-- Team Context -->
-                        <th class="stat-column team d-none">Team Games</th>
-                        <th class="stat-column team d-none">Team Goals Scored</th>
-                        <th class="stat-column team d-none">Team Goals Conceded</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for player in players %}
-                    <tr>
-                        <td>{{ player.name }}</td>
-                        <td>{{ player.team }}</td>
-                        
-                        <!-- Scoring Stats -->
-                        <td class="stat-column scoring">{{ player.goals }}</td>
-                        <td class="stat-column scoring">{{ player.goals_per_game }}</td>
-                        <td class="stat-column scoring">{{ player.goals_per_90 }}</td>
-                        <td class="stat-column scoring">{{ player.percentage_team_goals }}%</td>
-                        
-                        <!-- General Stats -->
-                        <td class="stat-column general d-none">{{ player.position }}</td>
-                        <td class="stat-column general d-none">{{ player.nationality }}</td>
-                        <td class="stat-column general d-none">{{ player.appearances }}</td>
-                        <td class="stat-column general d-none">{{ player.minutes_played }}</td>
-                        
-                        <!-- Team Context -->
-                        <td class="stat-column team d-none">{{ player.team_games }}</td>
-                        <td class="stat-column team d-none">{{ player.team_goals_scored }}</td>
-                        <td class="stat-column team d-none">{{ player.team_goals_conceded }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        <div class="stat-column team d-none">Team Games</div>
+                        <div class="stat-column team d-none">Team GF</div>
+                        <div class="stat-column team d-none">Team GA</div>
+                    </div>
+                    <div class="table-body">
+                        {% for player in players %}
+                            <div class="player-row" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+                                <div class="player-col">
+                                    <span class="player-rank">{{ loop.index }}</span>
+                                    <span class="player-name">{{ player.name }}</span>
+                                </div>
+                                <div class="team-col">{{ player.team }}</div>
+                                <!-- Scoring Stats -->
+                                <div class="stat-column scoring stat-highlight">{{ player.goals }}</div>
+                                <div class="stat-column scoring">{{ player.goals_per_game }}</div>
+                                <div class="stat-column scoring">{{ player.goals_per_90 }}</div>
+                                <div class="stat-column scoring">{{ player.percentage_team_goals }}%</div>
+                                <!-- General Stats -->
+                                <div class="stat-column general d-none">{{ player.position }}</div>
+                                <div class="stat-column general d-none">{{ player.nationality }}</div>
+                                <div class="stat-column general d-none">{{ player.appearances }}</div>
+                                <div class="stat-column general d-none">{{ player.minutes_played }}</div>
+                                <!-- Team Context -->
+                                <div class="stat-column team d-none">{{ player.team_games }}</div>
+                                <div class="stat-column team d-none">{{ player.team_goals_scored }}</div>
+                                <div class="stat-column team d-none">{{ player.team_goals_conceded }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-players">
+                    <div class="no-players-icon">
+                        <i class="fas fa-user-slash"></i>
+                    </div>
+                    <h3>No Player Statistics Available</h3>
+                    <p>Player data is not available at the moment. Please check back later!</p>
+                    <button class="refresh-btn">
+                        <i class="fas fa-sync-alt me-2"></i>
+                        Refresh Data
+                    </button>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- JavaScript for handling stat toggles -->
+    <style>
+        .players-container {
+            padding: 0;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin: 0;
+        }
+
+        /* Stats Navigation */
+        .stats-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-toggle-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-toggle-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stat-toggle-btn:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+
+        /* Players Table */
+        .players-table-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .players-table-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .table-header,
+        .player-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr repeat(4, 0.8fr); /* Default for scoring */
+            gap: 1rem;
+            padding: 1rem 2rem;
+            align-items: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .table-header {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .table-body {
+            max-height: 600px; /* Adjust as needed */
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) transparent;
+        }
+
+        .table-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .table-body::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .table-body::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        .player-row {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .player-row:last-child {
+            border-bottom: none;
+        }
+
+        .player-row:hover {
+            background: rgba(0, 0, 0, 0.02);
+            transform: translateX(5px);
+        }
+
+        .player-col {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+        }
+
+        .player-rank {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+        }
+
+        .team-col {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-column {
+            text-align: center;
+        }
+
+        .stat-highlight {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        /* No Players */
+        .no-players {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-light);
+            margin-top: 2rem;
+        }
+
+        .no-players-icon {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .no-players h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .no-players p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .refresh-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Responsive Adjustments for Table Columns */
+        @media (max-width: 1200px) {
+            .table-header,
+            .player-row {
+                grid-template-columns: 1.5fr 1fr repeat(3, 0.8fr); /* Hide one scoring column */
+            }
+            .stat-column.scoring:nth-child(5) { /* Goals/90 */
+                display: none;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .table-header,
+            .player-row {
+                grid-template-columns: 1.5fr 1fr repeat(2, 0.8fr); /* Hide another scoring column */
+            }
+            .stat-column.scoring:nth-child(4) { /* Goals/Game */
+                display: none;
+            }
+            .stat-column.general:nth-child(7), /* Nationality */
+            .stat-column.general:nth-child(8) { /* Appearances */
+                display: none;
+            }
+            .stat-column.team:nth-child(11), /* Team Games */
+            .stat-column.team:nth-child(12) { /* Team Goals Scored */
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-navigation {
+                flex-wrap: wrap;
+                padding: 0.5rem;
+                border-radius: 12px;
+            }
+            .stat-toggle-btn {
+                flex: 1 1 auto;
+                text-align: center;
+                justify-content: center;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .table-header,
+            .player-row {
+                grid-template-columns: 1.5fr 1fr 0.8fr; /* Only Player, Team, and main stat */
+                padding: 1rem;
+            }
+            .stat-column.scoring:nth-child(6), /* % Team Goals */
+            .stat-column.general:nth-child(9), /* Minutes */
+            .stat-column.team:nth-child(13) { /* Team Goals Conceded */
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            .player-col {
+                gap: 0.5rem;
+            }
+            .player-rank {
+                font-size: 1rem;
+                min-width: 20px;
+            }
+            .player-name {
+                font-size: 1rem;
+            }
+            .team-col {
+                font-size: 0.85rem;
+            }
+            .stat-highlight {
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .player-row {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const buttons = document.querySelectorAll('[data-stat]');
-        
-        buttons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                buttons.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Hide all stat columns
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('[data-stat]');
+            const tableHeader = document.querySelector('.table-header');
+            const playerRows = document.querySelectorAll('.player-row');
+
+            function updateTableColumns(statType) {
+                // Reset all columns to hidden
                 document.querySelectorAll('.stat-column').forEach(col => {
                     col.classList.add('d-none');
                 });
-                
+
                 // Show columns for selected stat category
-                const statType = this.dataset.stat;
                 document.querySelectorAll(`.stat-column.${statType}`).forEach(col => {
                     col.classList.remove('d-none');
                 });
+
+                // Adjust grid template columns based on active stat type
+                let gridTemplateColumns;
+                if (statType === 'scoring') {
+                    gridTemplateColumns = '1.5fr 1fr repeat(4, 0.8fr)';
+                } else if (statType === 'general') {
+                    gridTemplateColumns = '1.5fr 1fr repeat(4, 0.8fr)';
+                } else if (statType === 'team') {
+                    gridTemplateColumns = '1.5fr 1fr repeat(3, 0.8fr)';
+                }
+
+                // Apply to header and all rows
+                tableHeader.style.gridTemplateColumns = gridTemplateColumns;
+                playerRows.forEach(row => {
+                    row.style.gridTemplateColumns = gridTemplateColumns;
+                });
+
+                // Re-apply responsive hiding after grid update
+                applyResponsiveHiding();
+            }
+
+            function applyResponsiveHiding() {
+                const width = window.innerWidth;
+                document.querySelectorAll('.stat-column').forEach(col => col.classList.remove('d-none')); // Show all first
+
+                if (width <= 1200) {
+                    document.querySelectorAll('.stat-column.scoring:nth-child(5)').forEach(el => el.classList.add('d-none'));
+                }
+                if (width <= 992) {
+                    document.querySelectorAll('.stat-column.scoring:nth-child(4)').forEach(el => el.classList.add('d-none'));
+                    document.querySelectorAll('.stat-column.general:nth-child(7)').forEach(el => el.classList.add('d-none'));
+                    document.querySelectorAll('.stat-column.general:nth-child(8)').forEach(el => el.classList.add('d-none'));
+                    document.querySelectorAll('.stat-column.team:nth-child(11)').forEach(el => el.classList.add('d-none'));
+                    document.querySelectorAll('.stat-column.team:nth-child(12)').forEach(el => el.classList.add('d-none'));
+                }
+                if (width <= 768) {
+                    document.querySelectorAll('.stat-column.scoring:nth-child(6)').forEach(el => el.classList.add('d-none'));
+                    document.querySelectorAll('.stat-column.general:nth-child(9)').forEach(el => el.classList.add('d-none'));
+                    document.querySelectorAll('.stat-column.team:nth-child(13)').forEach(el => el.classList.add('d-none'));
+                }
+            }
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    updateTableColumns(this.dataset.stat);
+                });
+            });
+
+            // Initial load: set scoring as active and apply responsive hiding
+            updateTableColumns('scoring');
+            window.addEventListener('resize', () => {
+                const activeStat = document.querySelector('.stat-toggle-btn.active').dataset.stat;
+                updateTableColumns(activeStat);
+            });
+
+            // Refresh button functionality
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    icon.classList.add('fa-spin');
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        icon.classList.remove('fa-spin');
+                        this.disabled = false;
+                        location.reload();
+                    }, 2000);
+                });
+            }
+
+            // Player row click functionality
+            playerRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const playerName = this.querySelector('.player-name').textContent;
+                    console.log(`Clicked on player: ${playerName}`);
+                    // Here you could navigate to player details page
+                });
             });
         });
-    });
     </script>
 {% endblock %}

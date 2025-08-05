@@ -1,0 +1,570 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Custom Match Prediction
+{% endblock %}
+
+{% block main %}
+    <div class="prediction-container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-crystal-ball me-3"></i>
+                Predict Any Matchup
+            </h1>
+            <p class="page-subtitle">Select two teams to get a prediction based on our advanced model.</p>
+        </div>
+
+        <div class="prediction-form-wrapper" data-aos="fade-up">
+            <div class="prediction-card">
+                <h3 class="card-title-main">Select Teams</h3>
+                <form action="{{ url_for('predict_match') }}" method="post" class="prediction-form">
+                    <div class="form-group">
+                        <label for="home_team_name" class="form-label">Home Team</label>
+                        <input class="form-control" list="team_names" id="home_team_name" name="home_team_name" placeholder="Type to search..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="away_team_name" class="form-label">Away Team</label>
+                        <input class="form-control" list="team_names" id="away_team_name" name="away_team_name" placeholder="Type to search..." required>
+                    </div>
+                    
+                    <datalist id="team_names">
+                        {% for team_name in teams %}
+                            <option value="{{ team_name }}">{{ team_name }}</option>
+                        {% endfor %}
+                    </datalist>
+                    <button type="submit" class="btn btn-primary w-100 mt-4">
+                        <i class="fas fa-magic me-2"></i>Get Prediction
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if prediction %}
+            <div class="prediction-results-wrapper" data-aos="fade-up" data-aos-delay="200">
+                <div class="prediction-card">
+                    <h3 class="card-title-main">
+                        <span class="team-name-result">{{ prediction.home_team }}</span> 
+                        <span class="vs-text-result">VS</span> 
+                        <span class="team-name-result">{{ prediction.away_team }}</span>
+                    </h3>
+                    
+                    <div class="prediction-outcome-section">
+                        <div class="outcome-label">Predicted Outcome:</div>
+                        <div class="outcome-display">
+                            <i class="fas fa-star me-2"></i>
+                            <span class="outcome-text">{{ prediction.prediction }}</span>
+                        </div>
+                    </div>
+
+                    <div class="prediction-probabilities">
+                        <div class="prob-item">
+                            <div class="prob-label">Home Win</div>
+                            <div class="prob-bar-wrapper">
+                                <div class="prob-bar home-win-bar" style="width: {{ prediction.prob_home_win }}%;"></div>
+                                <span class="prob-percentage">{{ prediction.prob_home_win }}%</span>
+                            </div>
+                        </div>
+                        <div class="prob-item">
+                            <div class="prob-label">Draw</div>
+                            <div class="prob-bar-wrapper">
+                                <div class="prob-bar draw-bar" style="width: {{ prediction.prob_draw }}%;"></div>
+                                <span class="prob-percentage">{{ prediction.prob_draw }}%</span>
+                            </div>
+                        </div>
+                        <div class="prob-item">
+                            <div class="prob-label">Away Win</div>
+                            <div class="prob-bar-wrapper">
+                                <div class="prob-bar away-win-bar" style="width: {{ prediction.prob_away_win }}%;"></div>
+                                <span class="prob-percentage">{{ prediction.prob_away_win }}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="divider">
+
+
+            </div>
+        {% endif %}
+    </div>
+
+    <style>
+        .prediction-container {
+            padding: 0;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin: 0;
+        }
+
+        /* Prediction Card (Form & Results) */
+        .prediction-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prediction-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .prediction-form-wrapper,
+        .prediction-results-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .prediction-results-wrapper {
+            margin-top: 3rem;
+        }
+
+        .card-title-main {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .team-name-result {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .vs-text-result {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .form-control {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+            font-family: 'Roboto', sans-serif;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        /* Prediction Outcome */
+        .prediction-outcome-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .outcome-label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .outcome-display {
+            display: inline-flex;
+            align-items: center;
+            background: var(--success-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            box-shadow: var(--shadow-medium);
+            animation: pulse-outcome 2s infinite;
+        }
+
+        @keyframes pulse-outcome {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* Prediction Probabilities */
+        .prediction-probabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .prob-item {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .prob-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .prob-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .prob-bar-wrapper {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .prob-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease-out;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .prob-bar.home-win-bar { background: linear-gradient(90deg, #4caf50, #8bc34a); }
+        .prob-bar.draw-bar { background: linear-gradient(90deg, #ff9800, #ffc107); }
+        .prob-bar.away-win-bar { background: linear-gradient(90deg, #2196f3, #03a9f4); }
+
+        .prob-percentage {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary); /* Changed to dark for contrast */
+            z-index: 1;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        /* Insights Section */
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin: 3rem 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .insight-card {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .insight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .insight-card h5 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-list {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .form-item {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .form-item:hover {
+            transform: scale(1.1);
+        }
+
+        .form-item.win { background-color: #4caf50; }
+        .form-item.draw { background-color: #ff9800; }
+        .form-item.loss { background-color: #f44336; }
+
+        /* Head-to-Head History */
+        .h2h-table-wrapper {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .h2h-table-header,
+        .h2h-row {
+            display: grid;
+            grid-template-columns: 1fr 0.8fr 1fr;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            align-items: center;
+        }
+
+        .h2h-table-header {
+            background: rgba(0, 0, 0, 0.05);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .h2h-row {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .h2h-row:last-child {
+            border-bottom: none;
+        }
+
+        .h2h-row:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .h2h-col {
+            text-align: center;
+        }
+
+        .h2h-col.score {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .no-data-message {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            padding: 1.5rem;
+        }
+
+        /* No Prediction State */
+        .no-prediction {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-light);
+            margin-top: 2rem;
+        }
+
+        .no-prediction-icon {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .no-prediction h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .no-prediction p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .refresh-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .prediction-card {
+                padding: 1.5rem;
+            }
+
+            .card-title-main {
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .vs-text-result {
+                font-size: 1.2rem;
+            }
+
+            .outcome-display {
+                font-size: 1.5rem;
+                padding: 0.75rem 1.5rem;
+            }
+
+            .prediction-probabilities {
+                grid-template-columns: 1fr;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .h2h-table-header,
+            .h2h-row {
+                grid-template-columns: 1fr 0.6fr 1fr;
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-control {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .stat-toggle-btn {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .form-item {
+                width: 35px;
+                height: 35px;
+                line-height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh button functionality for no-prediction state
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    icon.classList.add('fa-spin');
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        icon.classList.remove('fa-spin');
+                        this.disabled = false;
+                        location.reload();
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+{% endblock %}

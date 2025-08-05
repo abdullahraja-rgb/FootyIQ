@@ -1,218 +1,670 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, width=device-width">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  
+  <link rel="icon" href="/static/fire-favicon.ico" type="image/x-icon" />
+  <link href="/static/styles.css" rel="stylesheet" />
+  
+  <title>Footy IQ </title>
+  
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      --light-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      
+      --primary-color: #667eea;
+      --secondary-color: #f5576c;
+      --accent-color: #00f2fe;
+      --success-color: #4facfe;
+      --warning-color: #ffa726;
+      
+      --bg-primary: #0f0f23;
+      --bg-secondary: #1a1a2e;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.1);
+      
+      --text-primary: #2c3e50;
+      --text-secondary: #7f8c8d;
+      --text-light: #ffffff;
+      --text-muted: #95a5a6;
+      
+      --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+      --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.2);
+      
+      --border-radius: 16px;
+      --border-radius-lg: 24px;
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    /* Animated Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+      z-index: -1;
+      animation: backgroundShift 20s ease-in-out infinite;
+    }
+    @keyframes backgroundShift {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+    /* Navbar */
+    .navbar {
+      background: rgba(15, 15, 35, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    .navbar.scrolled {
+      background: rgba(15, 15, 35, 0.98);
+      box-shadow: var(--shadow-medium);
+    }
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+    }
+    .navbar-brand::after {
+      content: '⚽';
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(-50%); }
+      40% { transform: translateY(-60%); }
+      60% { transform: translateY(-55%); }
+    }
+    .navbar-toggler {
+      border: none;
+      padding: 0.5rem;
+    }
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    .navbar-nav .nav-link {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.75rem 1.25rem;
+      margin: 0 0.25rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      position: relative;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .navbar-nav .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: var(--transition);
+      transform: translateX(-50%);
+    }
+    .navbar-nav .nav-link:hover {
+      color: var(--accent-color);
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    .navbar-nav .nav-link:hover::before {
+      width: 80%;
+    }
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 120px auto 2rem;
+      padding: 2.5rem;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-heavy);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    main::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary-gradient);
+    }
+    /* Flash Messages */
+    .alert {
+      background: var(--success-gradient);
+      color: white;
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      margin-bottom: 2rem;
+      border: none;
+      box-shadow: var(--shadow-light);
+      position: relative;
+      overflow: hidden;
+    }
+    .alert::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    /* Buttons */
+    .btn {
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.875rem 2rem;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: var(--transition);
+      border: none;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: var(--transition);
+    }
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: var(--shadow-light);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-medium);
+      color: white;
+    }
+    .btn-secondary {
+      background: var(--secondary-gradient);
+      color: white;
+      box-shadow: var(--shadow-light);
+    }
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-medium);
+      color: white;
+    }
+    /* Forms */
+    .form-control {
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+      transition: var(--transition);
+      font-family: 'Roboto', sans-serif;
+    }
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background: white;
+      transform: translateY(-2px);
+    }
+    .form-label {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+    /* Footer */
+    footer {
+      background: var(--dark-gradient);
+      color: var(--text-light);
+      padding: 3rem 0 2rem;
+      margin-top: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--primary-gradient);
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      text-align: center;
+    }
+    .footer-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+    .footer-text {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .footer-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    .footer-links a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+    .social-icons {
+      margin-top: 2rem;
+    }
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      margin: 0 0.75rem;
+      background: var(--bg-glass);
+      border-radius: 50%;
+      color: var(--text-light);
+      font-size: 1.2rem;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .social-icons a:hover {
+      background: var(--primary-gradient);
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: var(--shadow-medium);
+    }
+    /* Loading Animation */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.4rem;
+      }
+      .navbar-brand::after {
+        right: -25px;
+        font-size: 1rem;
+      }
+      .navbar-nav .nav-link {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem 0;
+      }
+      main {
+        margin: 100px 1rem 2rem;
+        padding: 2rem 1.5rem;
+      }
+      .btn {
+        font-size: 0.9rem;
+        padding: 0.75rem 1.5rem;
+      }
+      .social-icons a {
+        width: 45px;
+        height: 45px;
+        margin: 0 0.5rem;
+      }
+      .welcome-text {
+        font-size: 3rem; /* Smaller font size for mobile */
+      }
+      .subtitle-text {
+        font-size: 1rem;
+      }
+    }
+    @media (max-width: 576px) {
+      main {
+        margin: 90px 0.5rem 2rem;
+        padding: 1.5rem 1rem;
+        border-radius: var(--border-radius);
+      }
+      .footer-content {
+        padding: 0 1rem;
+      }
+      .footer-links a {
+        display: block;
+        margin: 0.5rem 0;
+      }
+      .welcome-text {
+        font-size: 2.5rem; /* Even smaller for very small screens */
+      }
+      .subtitle-text {
+        font-size: 0.9rem;
+      }
+    }
+    /* Scroll Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-gradient);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-gradient);
+    }
 
-    <!-- Bootstrap -->
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    /* New styles for welcome text animation */
+    .welcome-text-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 60vh; /* Adjust height as needed */
+      text-align: center;
+      padding: 1rem; /* Add some padding */
+    }
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    .welcome-text {
+      font-size: 5rem; /* Big text */
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      overflow: hidden; /* Ensures text is hidden until typed */
+      white-space: nowrap; /* Keeps text on a single line */
+      border-right: 0.15em solid var(--accent-color); /* Blinking cursor */
+      animation: 
+        typing 3.5s steps(22, end) forwards, /* 22 characters in "Welcome to Footy IQ" */
+        blink-caret 0.75s step-end infinite;
+      width: 0; /* Start with zero width */
+      margin-bottom: 1rem; /* Space between title and subtitle */
+    }
 
-    <link rel="icon" href="/static/fire-favicon.ico" type="image/x-icon">
-    <link href="/static/styles.css" rel="stylesheet">
+    /* Animation for the typing effect */
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
 
-    <title>Football Tracker {% block title %}{% endblock %}</title>
+    /* Animation for the blinking caret */
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--accent-color); }
+    }
 
-    <style>
-        :root {
-            --primary-color: #2196F3;
-            --secondary-color: #FF5722;
-            --accent-color: #FFC107;
-            --background-color: #f1f1f1;
-            --dark-color: #212121;
-            --light-color: #ffffff;
-            --text-color: #424242;
-        }
+    .subtitle-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text-light); /* Use light text color for contrast */
+      opacity: 0; /* Start invisible */
+      animation: 
+        typing-subtitle 4s steps(60, end) forwards 3.5s, /* 60 characters, starts after main title */
+        blink-caret-subtitle 0.75s step-end infinite 3.5s; /* Blinking cursor for subtitle */
+      overflow: hidden;
+      white-space: nowrap;
+      width: 0;
+      border-right: 0.15em solid var(--accent-color);
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            background-color: var(--background-color);
-            margin: 0;
-            padding: 0;
-            color: var(--text-color);
-        }
+    /* Animation for the subtitle typing effect */
+    @keyframes typing-subtitle {
+      from { width: 0 }
+      to { width: 100% }
+    }
 
-        .navbar {
-            background-color: var(--dark-color);
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            text-decoration: none;
-        }
-
-        .navbar-brand:hover {
-            color: var(--secondary-color);
-        }
-
-        .navbar-nav .nav-link {
-            color: var(--light-color);
-            font-size: 1.1rem;
-            margin-left: 1rem;
-            text-transform: uppercase;
-            padding: 0.8rem 1.2rem;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        main {
-            max-width: 1000px;
-            margin: 80px auto;
-            padding: 2rem;
-            background-color: var(--light-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .btn {
-            font-size: 1.2rem;
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 50px;
-            margin: 0.5rem;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--light-color);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            color: var(--light-color);
-        }
-
-        .alert {
-            background-color: var(--primary-color);
-            color: var(--light-color);
-            border-radius: 8px;
-            padding: 1rem;
-            font-size: 1rem;
-            text-align: center;
-            margin: 1rem 0;
-        }
-
-        footer {
-            background-color: var(--dark-color);
-            color: var(--light-color);
-            padding: 1rem;
-            text-align: center;
-        }
-
-        footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            color: var(--accent-color);
-            text-decoration: underline;
-        }
-
-        .form-control {
-            border-radius: 8px;
-            padding: 0.8rem;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            border: 2px solid var(--dark-color);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 4px rgba(76, 175, 80, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-
-            .navbar-nav .nav-link {
-                font-size: 1rem;
-                margin-left: 0.5rem;
-            }
-
-            main {
-                margin: 2rem auto;
-                padding: 1.5rem;
-            }
-
-            .btn {
-                font-size: 1rem;
-                padding: 0.7rem 1.5rem;
-            }
-        }
-    </style>
+    /* Animation for the subtitle blinking caret */
+    @keyframes blink-caret-subtitle {
+      from, to { border-color: transparent }
+      50% { border-color: var(--accent-color); }
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-md">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Football Tracker</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/upcoming">Upcoming Fixtures</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/rankings">Standings</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/results">Results</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/live">Live Matches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/players">Top Players</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/charts">Dashboard</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Flash Message -->
-    {% if get_flashed_messages() %}
-        <div class="alert" role="alert">
-            {{ get_flashed_messages() | join(" ") }}
-        </div>
-    {% endif %}
-
-    <!-- Main Content -->
-    <main>
-        {% block main %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <p>Football Tracker by Abdullah &copy; 2024 | <a href="#">Privacy Policy</a></p>
-    </footer>
-
-    <!-- Favicon Animation -->
-    <script>
-        (function() {
-            var favicons = [
-                '/static/fire-favicon-1.ico',
-                '/static/fire-favicon-2.ico',
-                '/static/fire-favicon-3.ico',
-                '/static/fire-favicon-4.ico'
-            ];
-            var currentFavicon = 0;
-            setInterval(function() {
-                currentFavicon = (currentFavicon + 1) % favicons.length;
-                document.querySelector('link[rel="icon"]').href = favicons[currentFavicon];
-            }, 500);
-        })();
-    </script>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg" id="mainNavbar">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Footy IQ</a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/upcoming">
+              <i class="fas fa-calendar-alt me-1"></i>Fixtures
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/rankings">
+              <i class="fas fa-trophy me-1"></i>Standings
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/results">
+              <i class="fas fa-chart-line me-1"></i>Results
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/live">
+              <i class="fas fa-broadcast-tower me-1"></i>Live
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/players">
+              <i class="fas fa-users me-1"></i>Top Players
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/predict">
+              <i class="fas fa-crystal-ball me-1"></i>Predict
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Flash Messages -->
+  {% if get_flashed_messages() %}
+    <div class="container mt-4">
+      <div class="alert fade-in-up">
+        <i class="fas fa-info-circle me-2"></i>
+        {{ get_flashed_messages() | join(" ") }}
+      </div>
+    </div>
+  {% endif %}
+  <!-- Main Content -->
+  <main class="fade-in-up">
+    {% block main %}
+      <div class="welcome-text-container">
+        <h1 class="welcome-text">Welcome to Footy IQ</h1>
+        <p class="subtitle-text">Predict your football games and stay up to date with the Premier League</p>
+      </div>
+    {% endblock %}
+  </main>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">Footy IQ</div>
+      <p class="footer-text">Your ultimate destination for football statistics, predictions, and live updates.</p>
+      
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+        <a href="#">About</a>
+      </div>
+      
+      
+      <p class="footer-text mt-3">
+        &copy; 2024 Football Tracker by Abdullah. All rights reserved.
+      </p>
+    </div>
+  </footer>
+  <!-- Enhanced Scripts -->
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('mainNavbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+    // Animated favicon with enhanced sequence
+    (function() {
+      const favicons = [
+        "/static/fire-favicon-1.ico",
+        "/static/fire-favicon-2.ico", 
+        "/static/fire-favicon-3.ico",
+        "/static/fire-favicon-4.ico"
+      ];
+      let index = 0;
+      
+      setInterval(() => {
+        const link = document.querySelector("link[rel='icon']");
+        if (link) {
+          link.href = favicons[index];
+          index = (index + 1) % favicons.length;
+        }
+      }, 600);
+    })();
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+    // Add loading states to buttons
+    document.querySelectorAll('.btn').forEach(button => {
+      button.addEventListener('click', function() {
+        if (!this.classList.contains('loading')) {
+          const originalText = this.innerHTML;
+          this.classList.add('loading');
+          this.innerHTML = '<span class="loading-spinner me-2"></span>Loading...';
+          
+          setTimeout(() => {
+            this.classList.remove('loading');
+            this.innerHTML = originalText;
+          }, 2000);
+        }
+      });
+    });
+    // Enhanced form interactions
+    document.querySelectorAll('.form-control').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
+  </script>
 </body>
 </html>
