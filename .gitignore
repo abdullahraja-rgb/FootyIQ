@@ -1,0 +1,99 @@
+# Byte-compiled / optimized / DLL files
+
+__pycache__/
+
+*.py[cod]
+
+*$py.class
+
+
+
+# Virtual environment folders
+
+env/
+
+venv/
+
+ENV/
+
+.venv/
+
+
+
+# Distribution / packaging
+
+build/
+
+dist/
+
+*.egg-info/
+
+.eggs/
+
+
+
+# Flask instance folder
+
+instance/
+
+
+
+# Pytest cache
+
+.pytest_cache/
+
+
+
+# Coverage reports
+
+.coverage
+
+htmlcov/
+
+
+
+# Jupyter Notebook checkpoints
+
+.ipynb_checkpoints/
+
+
+
+# VSCode settings
+
+.vscode/
+
+
+
+# Logs and databases
+
+*.log
+
+*.sqlite3
+
+*.db
+
+
+
+# Environment variables
+
+.env
+
+.env.local
+
+.env.*.local
+
+
+
+# macOS files
+
+.DS_Store
+
+
+
+# Node modules (if you have any frontend)
+
+node_modules/
+
+
+
+# Any other files to ignore
